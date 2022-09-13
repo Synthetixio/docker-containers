@@ -1,8 +1,9 @@
 FROM debian:bullseye-slim
 
+# trunk-ignore(hadolint/DL3008)
 RUN set -ex; \
     apt-get update; \
-    apt-get install -y \
+    apt-get install --no-install-recommends -y \
     bash \
     fluxbox \
     git \
@@ -11,7 +12,9 @@ RUN set -ex; \
     supervisor \
     x11vnc \
     xterm \
-    xvfb
+    xvfb \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV HOME=/root \
     DEBIAN_FRONTEND=noninteractive \
