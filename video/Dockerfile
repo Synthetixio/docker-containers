@@ -15,7 +15,9 @@ RUN apt-get -qqy update \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 COPY supervisord.conf /etc
-COPY entrypoint.sh video.sh video_ready.py /opt/bin/
+COPY entrypoint.sh /opt/bin/
+COPY video.sh /opt/bin/
+COPY video_ready.py /opt/bin/
 WORKDIR /opt/bin
 RUN pip install --no-cache-dir psutil==5.9.2
 
