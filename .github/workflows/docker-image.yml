@@ -52,7 +52,7 @@ jobs:
       - name: Build and push (${{ matrix.image }})
         uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94 # pin@v2
         with:
-          context: .
+          context: ./${{ matrix.image }}
           file: ./${{ matrix.image }}/Dockerfile
           platforms: linux/amd64
           push: true
