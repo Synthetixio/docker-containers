@@ -3,10 +3,6 @@ name: Docker Image CI
 on:
   push:
     branches: [main]
-    paths:
-      - "**/output/**"
-      - "**/Dockerfile"
-      - ".github/workflows/docker-image.yml"
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
