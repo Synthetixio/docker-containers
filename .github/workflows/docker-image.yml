@@ -1,0 +1,59 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "output/**"
+      - ".github/workflows/docker-image.yml"
+
+jobs:
+  build_and_push:
+    strategy:
+      matrix:
+        image: [display]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # pin@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@8b122486cedac8393e77aa9734c3528886e4a1a8 # pin@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@dc7b9719a96d48369863986a06765841d7ea23f6 # pin@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@515d10b4fd9bb4858066bd5769f55bd498dcdd27 # pin@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-${{ matrix.image }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.image }}-buildx-
+
+      - name: Login to DockerHub
+        uses: docker/login-action@49ed152c8eca782a232dede0303416e8f356c37b # pin@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@49ed152c8eca782a232dede0303416e8f356c37b # pin@v1
+      #   with:
+      #     registry: ghcr.io
+      #     username: synthetixio
+      #     password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
+
+      - name: Build and push (${{ matrix.image }})
+        uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94 # pin@v2
+        with:
+          context: .
+          file: ./${{ matrix.image }}/Dockerfile
+          platforms: linux/amd64
+          push: true
+          # tags: |
+          #   ghcr.io/synthetixio/${{ matrix.image }}/base:${{ github.sha }}
+          #   synthetixio/${{ matrix.image }}:${{ github.sha }}-base
+          tags: synthetixio/${{ matrix.image }}:${{ github.sha }}-base
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
