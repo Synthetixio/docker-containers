@@ -1,4 +1,4 @@
-FROM alpine:3.12
+FROM alpine:3.16
 
 ARG GLIBC_VERSION=2.31-r0
 
@@ -21,6 +21,7 @@ RUN set -x \
       armel)   NGROKARCH="arm" ;; \
       x86)     NGROKARCH="386" ;; \
       x86_64)  NGROKARCH="amd64" ;; \
+      aarch64)  NGROKARCH="amd64" ;; \
     esac \
  && wget -q -O ngrok.tgz https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-$NGROKARCH.tgz \
  && tar xvzf ngrok.tgz -C /bin \
