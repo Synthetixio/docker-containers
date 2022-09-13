@@ -2,9 +2,10 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
-      - "output/**"
+      - "**/output/**"
+      - "**/Dockerfile"
       - ".github/workflows/docker-image.yml"
 
 jobs:
