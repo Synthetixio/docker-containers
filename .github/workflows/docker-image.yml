@@ -16,7 +16,7 @@ jobs:
   build_and_push:
     strategy:
       matrix:
-        image: [display]
+        image: [display, video]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
