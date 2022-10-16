@@ -12,7 +12,7 @@ jobs:
   build_and_push:
     strategy:
       matrix:
-        image: [display, video, ngrok]
+        image: [display, video, ngrok, foundry]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
