@@ -4,7 +4,9 @@ RUN apk add clang lld curl build-base linux-headers git \
     && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh \
     && chmod +x ./rustup.sh \
     && ./rustup.sh -y
-RUN git clone https://github.com/foundry-rs/foundry.git#b554ab1fec09087fa3a35c6728968edca6debcf2
+RUN git clone https://github.com/foundry-rs/foundry.git \
+    && cd foundry \
+    && git reset --hard b554ab1fec09087fa3a35c6728968edca6debcf2
 WORKDIR /opt/foundry
 RUN source $HOME/.profile && cargo build --release \
     && strip /opt/foundry/target/release/forge \
