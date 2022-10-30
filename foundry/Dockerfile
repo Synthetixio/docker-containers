@@ -29,4 +29,6 @@ RUN adduser -Du 1000 foundry
 
 ENV ANVIL_FORK_URL https://rpc.ankr.com/eth_goerli
 
+EXPOSE 8545
+
 ENTRYPOINT ["/bin/sh", "-c"]
