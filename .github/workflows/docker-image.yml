@@ -38,12 +38,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Login to GitHub Container Registry
-      #   uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # pin@v1
-      #   with:
-      #     registry: ghcr.io
-      #     username: synthetixio
-      #     password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # pin@v1
+        with:
+          registry: ghcr.io
+          username: synthetixio
+          password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
 
       - name: Build and push (${{ matrix.image }})
         uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5 # pin@v2
@@ -52,9 +52,9 @@ jobs:
           file: ./${{ matrix.image }}/Dockerfile
           platforms: linux/amd64
           push: true
-          # tags: |
-          #   ghcr.io/synthetixio/${{ matrix.image }}/base:${{ github.sha }}
-          #   synthetixio/${{ matrix.image }}:${{ github.sha }}-base
-          tags: synthetixio/${{ matrix.image }}:${{ github.sha }}-base
+          tags: |
+            ghcr.io/synthetixio/${{ matrix.image }}/base:${{ github.sha }}
+            synthetixio/${{ matrix.image }}:${{ github.sha }}-base
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+        continue-on-error: true
