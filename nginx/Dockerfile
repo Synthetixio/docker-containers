@@ -35,5 +35,3 @@ RUN chmod a+x /etc/periodic/daily/update_blocker
 # start crond to update blocker
 # trunk-ignore(hadolint/DL3059)
 RUN crond -b
-
-USER nginx
