@@ -4,9 +4,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 # trunk-ignore(hadolint/DL3018)
 RUN apk add --no-cache \
-    curl \
     wget \
-    bind-tools \
     && echo "Finished installing packages"
 
 RUN mkdir -p /etc/nginx/bots.d && \
