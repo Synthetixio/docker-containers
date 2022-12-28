@@ -1,5 +1,7 @@
 FROM nginx:1.23.3-alpine-slim
 
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # trunk-ignore(hadolint/DL3018)
 RUN apk add --no-cache \
     curl \
