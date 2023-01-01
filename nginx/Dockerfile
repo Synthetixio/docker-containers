@@ -11,6 +11,7 @@ ARG MODSEC_NGINX_CONNECTOR_VERSION=v1.0.3
 ARG NGINX_GEOIP2_MODULE_VERSION=3.4
 ARG GEO_DB_RELEASE=2022-12
 ARG OWASP_TAG=v3.3.4
+ARG BROTLI_VERSION=master
 
 WORKDIR /opt
 
@@ -20,12 +21,15 @@ RUN apk add --no-cache --virtual dependencies \
     automake \
     byacc \
     curl-dev \
+    cmake \
+    cargo \
     flex \
     g++ \
     gcc \
     geoip-dev \
     gd-dev \
     git \
+    go \
     gnupg \
     libcurl \
     libc-dev \
@@ -40,6 +44,9 @@ RUN apk add --no-cache --virtual dependencies \
     make \
     openssl-dev \
     pcre-dev \
+    perl \
+    patch \
+    rust \
     yajl-dev \
     zlib-dev
 
@@ -79,6 +86,9 @@ RUN git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git --br
     wget -O - https://download.db-ip.com/free/dbip-city-lite-${GEO_DB_RELEASE}.mmdb.gz | gzip -d > /etc/nginx/geoip/dbip-city-lite.mmdb && \
     wget -O - https://download.db-ip.com/free/dbip-country-lite-${GEO_DB_RELEASE}.mmdb.gz | gzip -d > /etc/nginx/geoip/dbip-country-lite.mmdb
 
+# install brotli
+RUN git clone --depth=1 https://github.com/google/ngx_brotli --branch ${BROTLI_VERSION}
+
 ENV LIB_SODIUM=/usr/local/libsodium
 ENV LIB_MODSECURITY=/usr/local/modsecurity
 
@@ -89,12 +99,15 @@ RUN (cd "/opt/nginx-$NGINX_VERSION" && \
             --add-dynamic-module=../ngx_waf \
             --add-dynamic-module=../ModSecurity-nginx \
             --add-dynamic-module=../ngx_http_geoip2_module \
+            --add-dynamic-module=../ngx_brotli \
             --with-cc-opt='-fstack-protector-strong' && \
         make modules \
     ) && \
     cp /opt/nginx-$NGINX_VERSION/objs/ngx_http_modsecurity_module.so \
         /opt/nginx-$NGINX_VERSION/objs/ngx_http_geoip2_module.so \
         /opt/nginx-$NGINX_VERSION/objs/ngx_http_waf_module.so \
+        /opt/nginx-$NGINX_VERSION/objs/ngx_http_brotli_filter_module.so \
+        /opt/nginx-$NGINX_VERSION/objs/ngx_http_brotli_static_module.so \
         /usr/lib/nginx/modules/ && \
     rm -fr /opt/* && \
     apk del dependencies
