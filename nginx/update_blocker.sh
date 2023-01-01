@@ -10,4 +10,4 @@ sed -i 's/^\t*89.187.173.66\t*1;$/#\t89.187.173.66\t\t1;/g' /etc/nginx/conf.d/gl
 
 # test & reload nginx
 nginx -t
-nginx -s reload
+nginx -s stop && nginx
