@@ -12,6 +12,7 @@ ARG NGINX_GEOIP2_MODULE_VERSION=3.4
 ARG GEO_DB_RELEASE=2022-12
 ARG OWASP_TAG=v3.3.4
 ARG BROTLI_VERSION=master
+ARG HEADERS_MORE_VERSION=master
 
 WORKDIR /opt
 
@@ -89,6 +90,9 @@ RUN git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git --br
 # install brotli
 RUN git clone --depth=1 https://github.com/google/ngx_brotli --branch ${BROTLI_VERSION}
 
+# install headers-more
+RUN git clone --depth=1 https://github.com/openresty/headers-more-nginx-module --branch ${HEADERS_MORE_VERSION}
+
 ENV LIB_SODIUM=/usr/local/libsodium
 ENV LIB_MODSECURITY=/usr/local/modsecurity
 
@@ -100,6 +104,7 @@ RUN (cd "/opt/nginx-$NGINX_VERSION" && \
             --add-dynamic-module=../ModSecurity-nginx \
             --add-dynamic-module=../ngx_http_geoip2_module \
             --add-dynamic-module=../ngx_brotli \
+            --add-dynamic-module=../headers-more-nginx-module \
             --with-cc-opt='-fstack-protector-strong' && \
         make modules \
     ) && \
@@ -108,6 +113,7 @@ RUN (cd "/opt/nginx-$NGINX_VERSION" && \
         /opt/nginx-$NGINX_VERSION/objs/ngx_http_waf_module.so \
         /opt/nginx-$NGINX_VERSION/objs/ngx_http_brotli_filter_module.so \
         /opt/nginx-$NGINX_VERSION/objs/ngx_http_brotli_static_module.so \
+        /opt/nginx-$NGINX_VERSION/objs/ngx_http_headers_more_filter_module.so \
         /usr/lib/nginx/modules/ && \
     rm -fr /opt/* && \
     apk del dependencies
