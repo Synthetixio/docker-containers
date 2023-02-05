@@ -12,7 +12,7 @@ jobs:
   build_and_push:
     strategy:
       matrix:
-        image: [display, video, ngrok, foundry, nginx]
+        image: [display, video, ngrok, foundry, nginx, nginx-debug]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -50,7 +50,7 @@ jobs:
         with:
           context: ./${{ matrix.image }}
           file: ./${{ matrix.image }}/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ghcr.io/synthetixio/${{ matrix.image }}/base:${{ github.sha }}
