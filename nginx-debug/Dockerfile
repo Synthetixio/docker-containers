@@ -9,7 +9,7 @@ ARG LIB_SODIUM_VERSION=1.0.18-RELEASE
 ARG MODSEC_VERSION=v3.0.8
 ARG MODSEC_NGINX_CONNECTOR_VERSION=v1.0.3
 ARG NGINX_GEOIP2_MODULE_VERSION=3.4
-ARG GEO_DB_RELEASE=2022-12
+ARG GEO_DB_RELEASE=2023-04
 ARG OWASP_TAG=v3.3.4
 ARG BROTLI_VERSION=master
 ARG HEADERS_MORE_VERSION=master
@@ -69,14 +69,14 @@ RUN git clone --depth=1 https://github.com/jedisct1/libsodium.git --branch ${LIB
 RUN git clone --depth 1 https://github.com/SpiderLabs/ModSecurity.git --branch ${MODSEC_VERSION} && \
     git -C /opt/ModSecurity submodule update --init --recursive && \
     (cd "/opt/ModSecurity" && \
-        ./build.sh && \
-        ./configure --with-lmdb && \
-        make -j$(nproc) && \
-        make install \
+    ./build.sh && \
+    ./configure --with-lmdb && \
+    make -j$(nproc) && \
+    make install \
     ) && \
     rm -fr /opt/ModSecurity \
-        /usr/local/modsecurity/lib/libmodsecurity.a \
-        /usr/local/modsecurity/lib/libmodsecurity.la
+    /usr/local/modsecurity/lib/libmodsecurity.a \
+    /usr/local/modsecurity/lib/libmodsecurity.la
 
 # install modsec nginx connector, geoip, owasp rules, and nginx with geoip databases
 RUN git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git --branch ${MODSEC_NGINX_CONNECTOR_VERSION} && \
@@ -98,23 +98,23 @@ ENV LIB_MODSECURITY=/usr/local/modsecurity
 
 # install nginx modules
 RUN (cd "/opt/nginx-$NGINX_VERSION" && \
-        ./configure --with-compat \
-            --with-debug \
-            --add-dynamic-module=../ngx_waf \
-            --add-dynamic-module=../ModSecurity-nginx \
-            --add-dynamic-module=../ngx_http_geoip2_module \
-            --add-dynamic-module=../ngx_brotli \
-            --add-dynamic-module=../headers-more-nginx-module \
-            --with-cc-opt='-fstack-protector-strong' && \
-        make modules \
+    ./configure --with-compat \
+    --with-debug \
+    --add-dynamic-module=../ngx_waf \
+    --add-dynamic-module=../ModSecurity-nginx \
+    --add-dynamic-module=../ngx_http_geoip2_module \
+    --add-dynamic-module=../ngx_brotli \
+    --add-dynamic-module=../headers-more-nginx-module \
+    --with-cc-opt='-fstack-protector-strong' && \
+    make modules \
     ) && \
     cp /opt/nginx-$NGINX_VERSION/objs/ngx_http_modsecurity_module.so \
-        /opt/nginx-$NGINX_VERSION/objs/ngx_http_geoip2_module.so \
-        /opt/nginx-$NGINX_VERSION/objs/ngx_http_waf_module.so \
-        /opt/nginx-$NGINX_VERSION/objs/ngx_http_brotli_filter_module.so \
-        /opt/nginx-$NGINX_VERSION/objs/ngx_http_brotli_static_module.so \
-        /opt/nginx-$NGINX_VERSION/objs/ngx_http_headers_more_filter_module.so \
-        /usr/lib/nginx/modules/ && \
+    /opt/nginx-$NGINX_VERSION/objs/ngx_http_geoip2_module.so \
+    /opt/nginx-$NGINX_VERSION/objs/ngx_http_waf_module.so \
+    /opt/nginx-$NGINX_VERSION/objs/ngx_http_brotli_filter_module.so \
+    /opt/nginx-$NGINX_VERSION/objs/ngx_http_brotli_static_module.so \
+    /opt/nginx-$NGINX_VERSION/objs/ngx_http_headers_more_filter_module.so \
+    /usr/lib/nginx/modules/ && \
     rm -fr /opt/* && \
     apk del dependencies
 
